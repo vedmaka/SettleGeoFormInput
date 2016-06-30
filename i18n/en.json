@@ -1,0 +1,7 @@
+{
+  "@metadata": {
+    "authors": []
+  },
+  "settlegeoforminput-desc": "This is an example extension",
+  "settlegeoforminput-i18n-welcome": "Welcome to the localization file of the SettleGeoFormInput extension."
+}

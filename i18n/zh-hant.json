@@ -1,0 +1,10 @@
+{
+  "@metadata": {
+    "authors": [
+      "Kevinhksouth",
+      "Simon Shek"
+    ]
+  },
+  "settlegeoforminput-desc": "這是一個示例擴展",
+  "settlegeoforminput-i18n-welcome": "歡迎使用 SettleGeoFormInput 擴充套件的本地語系檔案。"
+}

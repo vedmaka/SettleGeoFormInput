@@ -1,0 +1,10 @@
+{
+  "@metadata": {
+    "authors": [
+      "Lloffiwr",
+      "Chase me ladies, I'm the Cavalry"
+    ]
+  },
+  "settlegeoforminput-desc": "This is an example extension",
+  "settlegeoforminput-i18n-welcome": "Welcome to the localisation file of the SettleGeoFormInput extension."
+}

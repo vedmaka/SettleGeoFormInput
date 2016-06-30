@@ -1,0 +1,9 @@
+{
+  "@metadata": {
+    "authors": [
+      "Gomoko"
+    ]
+  },
+  "settlegeoforminput-desc": "Voici un exemple d'extension",
+  "settlegeoforminput-i18n-welcome": "Bienvenue dans le fichier de localisation de l'extension passepartout."
+}

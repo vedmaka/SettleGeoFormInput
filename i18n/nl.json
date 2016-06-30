@@ -1,0 +1,10 @@
+{
+  "@metadata": {
+    "authors": [
+      "AvatarTeam",
+      "SPQRobin"
+    ]
+  },
+  "settlegeoforminput-desc": "Dit is een voorbeeld van de uitbreiding",
+  "settlegeoforminput-i18n-welcome": "Welkom bij het lokalisatiebestand van de SettleGeoFormInput-uitbreiding."
+}

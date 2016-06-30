@@ -1,0 +1,47 @@
+{
+	"name": "SettleGeoFormInput",
+	"version": "0.0.1",
+	"author": [
+		"Jon Anderton"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:SettleGeoFormInput",
+	"descriptionmsg": "settlegeoforminput-desc",
+	"license-name": "MIT",
+	"type": "other",
+	"AutoloadClasses": {
+        "SettleGeoFormInput": "SettleGeoFormInput.class.php",
+		"SettleGeoFormInputHooks": "SettleGeoFormInput.hooks.php"
+	},
+	"config": {
+		"SettleGeoFormInputEnableFoo": true
+	},
+	"callback": "SettleGeoFormInputHooks::onExtensionLoad",
+	"ExtensionMessagesFiles": {
+		"SettleGeoFormInputAlias": "SettleGeoFormInput.i18n.alias.php"
+	},
+	"Hooks": {
+		"sfFormPrinterSetup": [
+			"SettleGeoFormInputHooks::onsfFormPrinterSetup"
+		]
+	},
+	"MessagesDirs": {
+		"SettleGeoFormInput": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"ext.settlegeoforminput.foo": {
+			"scripts": [
+				"modules/ext.SettleGeoFormInput.foo.js",
+				"modules/ext.SettleGeoFormInput.js"
+			],
+			"styles": [
+				"modules/ext.SettleGeoFormInput.foo.css"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "SettleGeoFormInput"
+	}
+}

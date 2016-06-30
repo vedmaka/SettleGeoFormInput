@@ -1,0 +1,10 @@
+{
+  "@metadata": {
+    "authors": [
+      "Hydra",
+      "Hudafu"
+    ]
+  },
+  "settlegeoforminput-desc": "这是一个示例扩展程序",
+  "settlegeoforminput-i18n-welcome": "欢迎来到SettleGeoFormInput扩展程序的本地化文件。"
+}

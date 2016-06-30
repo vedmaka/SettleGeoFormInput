@@ -1,0 +1,9 @@
+{
+  "@metadata": {
+    "authors": [
+      "DCamer"
+    ]
+  },
+  "settlegeoforminput-desc": "Это пример расширения",
+  "settlegeoforminput-i18n-welcome": "Добро пожаловать в файл локализации расширения SettleGeoFormInput."
+}
