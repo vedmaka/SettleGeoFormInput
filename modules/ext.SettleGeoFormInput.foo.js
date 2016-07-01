@@ -6,6 +6,19 @@ $( function () {
     var SettleGeoInput = function( element ) {
         this.$element = $(element);
         this.geoType = this.$element.data('geo-type');
+        
+        this.stateElement = undefined;
+        if( this.$element.data('state-input-name') ) {
+            var stateInput = $( '[name="' + this.$element.data('state-input-name') + '"]' );
+            this.stateElement = stateInput.parent();
+        }
+        
+        this.cityElement = undefined;
+        if( this.$element.data('city-input-name') ) {
+            var cityInput = $( '[name="' + this.$element.data('city-input-name') + '"]' );
+            this.cityElement = cityInput.parent();
+        }
+        
         this.init();
     };
 
@@ -20,9 +33,7 @@ $( function () {
 
     SettleGeoInput.prototype.preloadSelectedValuesStates = function() {
 
-        var stateElement = $('[data-geo-type="state"]');
-
-        if( stateElement.length && !stateElement.data('geo-loaded') ) {
+        if( this.stateElement != undefined && !this.stateElement.data('geo-loaded') ) {
 
             var selectValue = this.$element.find('option:selected').data('geo-id');
 
@@ -30,11 +41,11 @@ $( function () {
                 return false;
             }
 
-            var stateSelected = stateElement.data('selected-item');
+            var stateSelected = this.stateElement.data('selected-item');
             if( stateSelected != undefined ) {
-                this.loadValues( stateElement, 'state', selectValue, stateSelected );
+                this.loadValues( this.stateElement, 'state', selectValue, stateSelected );
             }else{
-                this.loadValues( stateElement, 'state', selectValue );
+                this.loadValues( this.stateElement, 'state', selectValue );
             }
         }
 
@@ -42,24 +53,21 @@ $( function () {
 
     SettleGeoInput.prototype.preloadSelectedValuesCities = function() {
 
-        var cityElement = $('[data-geo-type="city"]');
-        var stateElement = $('[data-geo-type="state"]');
+        if( this.stateElement != undefined && this.cityElement != undefined && !this.cityElement.data('geo-loaded') ) {
 
-        if( stateElement.length && cityElement.length && !cityElement.data('geo-loaded') ) {
+            this.cityElement.data('geo-loaded', true);
 
-            cityElement.data('geo-loaded', true);
-
-            var selectValue = stateElement.find('option:selected').data('geo-id');
+            var selectValue = this.stateElement.find('option:selected').data('geo-id');
 
             if( selectValue == undefined || !selectValue ) {
                 return false;
             }
 
-            var citySelected = cityElement.data('selected-item');
+            var citySelected = this.cityElement.data('selected-item');
             if( citySelected != undefined ) {
-                this.loadValues( cityElement, 'city', selectValue, citySelected );
+                this.loadValues( this.cityElement, 'city', selectValue, citySelected );
             }else{
-                this.loadValues( cityElement, 'city', selectValue );
+                this.loadValues( this.cityElement, 'city', selectValue );
             }
         }
 
@@ -69,23 +77,21 @@ $( function () {
 
         var select = event.target;
         var selectValue = $(select).find('option:selected').data('geo-id');
-        var stateElement = $('[data-geo-type="state"]');
-        var cityElement = $('[data-geo-type="city"]');
 
         if( selectValue != undefined ) {
 
             switch (this.geoType) {
                 case 'country':
-                    if (stateElement.length) {
-                        this.loadValues(stateElement, 'state', selectValue);
+                    if (this.stateElement != undefined) {
+                        this.loadValues(this.stateElement, 'state', selectValue);
                     }
-                    if (cityElement.length) {
-                        cityElement.find('select').html('');
+                    if (this.cityElement != undefined) {
+                        this.cityElement.find('select').html('');
                     }
                     break;
                 case 'state':
-                    if (cityElement.length) {
-                        this.loadValues(cityElement, 'city', selectValue);
+                    if (this.cityElement != undefined) {
+                        this.loadValues(this.cityElement, 'city', selectValue);
                     }
                     break;
                 case 'city':
@@ -95,16 +101,16 @@ $( function () {
 
         }else{
             if( this.geoType == 'country' ) {
-                if (stateElement.length) {
-                    stateElement.find('select').html('');
+                if (this.stateElement != undefined) {
+                    this.stateElement.find('select').html('');
                 }
-                if (cityElement.length) {
-                    cityElement.find('select').html('');
+                if (this.cityElement != undefined) {
+                    this.cityElement.find('select').html('');
                 }
             }
             if( this.geoType == 'state' ) {
-                if (cityElement.length) {
-                    cityElement.find('select').html('');
+                if (this.cityElement != undefined) {
+                    this.cityElement.find('select').html('');
                 }
             }
         }

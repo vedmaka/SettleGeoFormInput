@@ -37,6 +37,14 @@ class SettleGeoFormInput extends SFDropdownInput
 
 		$spanClass = 'inputSpan';
 		$spanAttrs = array( 'class' => $spanClass . ' settle-geo-input', 'data-geo-type' => $geoType );
+		
+		if( in_array('state_input', $other_args) ) {
+			$spanAttrs['data-state-input-name'] = $other_args['state_input'];
+		}
+		
+		if( in_array('city_input', $other_args) ) {
+			$spanAttrs['data-city-input-name'] = $other_args['city_input'];
+		}
 
 		// Standardize $cur_value
 		if ( is_null( $cur_value ) ) { $cur_value = ''; }
