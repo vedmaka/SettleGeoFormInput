@@ -141,13 +141,23 @@ $( function () {
             var items = data.settlegeotaxonomy.items;
 
             if (!items.length) {
-                if( type == 'city' && self.geoType == 'state' ) {
+                if( type == 'city' && ( self.geoType == 'state' || self.geoType == 'country' ) ) {
+
+                    var sourceElement;
+                    if( self.geoType == 'state' ) {
+                        sourceElement = self.$element;
+                    }
+                    if( self.geoType == 'country' && self.stateElement ) {
+                        sourceElement = self.stateElement;
+                    }
+
                     var opt = $('<option/>');
-                    opt.prop('value', self.$element.find('select').val());
-                    opt.text(self.$element.find('select').val());
+                    opt.prop('value', sourceElement.find('select').val());
+                    opt.text(sourceElement.find('select').val());
                     opt.prop('selected', true);
                     elementSelect.html( opt );
                 }
+                elementSelect.prop('disabled', false);
                 return false;
             }
 
