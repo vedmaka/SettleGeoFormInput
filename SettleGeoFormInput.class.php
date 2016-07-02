@@ -14,7 +14,7 @@ class SettleGeoFormInput extends SFDropdownInput
 	}
 
 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
-		global $sfgTabIndex, $sfgFieldNum, $wgOut;
+		global $sfgTabIndex, $sfgFieldNum, $wgOut, $wgLang;
 
 		if( !array_key_exists('geo_type', $other_args) ) {
 			return "Error: please specify geo_type attribute for this input.";
@@ -66,27 +66,35 @@ class SettleGeoFormInput extends SFDropdownInput
 		}
 
 		$possible_values = array();
+		$preload_values = array();
 
 		if( $preload ) {
 			switch ( $geoType ) {
 				case 'country':
-					$possible_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_COUNTRY, null, false );
+					$preload_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_COUNTRY, null, $wgLang->getCode() );
 					break;
 				case 'state':
-					$possible_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_STATE, null, false );
+					$preload_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_STATE, null, $wgLang->getCode() );
 					break;
 				case 'city':
-					$possible_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_CITY, null, false );
+					$preload_values = SettleGeoTaxonomy::getInstance()->getEntities( SettleGeoTaxonomy::TYPE_CITY, null, $wgLang->getCode() );
 					break;
 			}
 		}
 
-		foreach ( $possible_values as $possible_value ) {
-			$optionAttrs = array( 'value' => $possible_value['name'], 'data-geo-id' => $possible_value['id'] );
-			if ( $possible_value['name'] == $cur_value ) {
+		/** @var MenaraSolutions\Geographer\Divisible $preload_value */
+		foreach ( $preload_values as $preload_value ) {
+
+			$optionAttrs = array(
+				'value' => $preload_value['name'],
+				'data-geo-id' => $preload_value['geonamesCode']
+			);
+
+			if ( $preload_value['name'] == $cur_value ) {
 				$optionAttrs['selected'] = "selected";
 			}
-			$label = $possible_value['name'];
+
+			$label = $preload_value['name'];
 			$innerDropdown .= Html::element( 'option', $optionAttrs, $label );
 		}
 
@@ -101,11 +109,13 @@ class SettleGeoFormInput extends SFDropdownInput
 			$selectAttrs['disabled'] = 'disabled';
 		}
 
-		$text = Html::rawElement( 'select', $selectAttrs, $innerDropdown );
-		if ( $is_mandatory ) {
-			$spanClass .= ' mandatoryFieldSpan';
+		if( array_key_exists('data_input', $other_args) ) {
+			$spanAttrs['data-hidden-input'] = $other_args['data_input'];
 		}
+
+		$text = Html::rawElement( 'select', $selectAttrs, $innerDropdown );
 		$text = Html::rawElement( 'span', $spanAttrs, $text );
+
 		return $text;
 	}
 

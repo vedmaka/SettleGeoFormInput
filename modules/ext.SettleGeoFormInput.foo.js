@@ -5,6 +5,7 @@ $( function () {
      */
     var SettleGeoInput = function( element ) {
         this.$element = $(element);
+        this.$codeInput = undefined;
         this.geoType = this.$element.data('geo-type');
         
         this.stateElement = undefined;
@@ -23,6 +24,11 @@ $( function () {
     };
 
     SettleGeoInput.prototype.init = function() {
+
+        if( this.$element.data('hidden-input') ) {
+            this.$codeInput = $('input[name="' + this.$element.data('hidden-input') + '"]');
+        }
+
         this.$element.find('select').on('change', $.proxy( this.onChange, this ));
 
         if( this.geoType == 'country' ) {
@@ -86,7 +92,7 @@ $( function () {
                         this.loadValues(this.stateElement, 'state', selectValue);
                     }
                     if (this.cityElement != undefined) {
-                        this.cityElement.find('select').html('');
+                        this.cityElement.find('select').html('<option></option>');
                     }
                     break;
                 case 'state':
@@ -99,18 +105,22 @@ $( function () {
                     break;
             }
 
+            if( this.$codeInput ) {
+                this.$codeInput.val(selectValue);
+            }
+
         }else{
             if( this.geoType == 'country' ) {
                 if (this.stateElement != undefined) {
-                    this.stateElement.find('select').html('');
+                    this.stateElement.find('select').html('<option></option>');
                 }
                 if (this.cityElement != undefined) {
-                    this.cityElement.find('select').html('');
+                    this.cityElement.find('select').html('<option></option>');
                 }
             }
             if( this.geoType == 'state' ) {
                 if (this.cityElement != undefined) {
-                    this.cityElement.find('select').html('');
+                    this.cityElement.find('select').html('<option></option>');
                 }
             }
         }
@@ -131,6 +141,13 @@ $( function () {
             var items = data.settlegeotaxonomy.items;
 
             if (!items.length) {
+                if( type == 'city' && self.geoType == 'state' ) {
+                    var opt = $('<option/>');
+                    opt.prop('value', self.$element.find('select').val());
+                    opt.text(self.$element.find('select').val());
+                    opt.prop('selected', true);
+                    elementSelect.html( opt );
+                }
                 return false;
             }
 
@@ -140,7 +157,7 @@ $( function () {
                 var option = $('<option />');
                 option.prop('value', item.name);
                 option.text(item.name);
-                option.data('geo-id', item.id);
+                option.data('geo-id', item.geonamesCode);
                 if( preselect != undefined ) {
                     if( preselect == item.name ) {
                         option.prop('selected', true);
