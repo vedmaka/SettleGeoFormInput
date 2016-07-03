@@ -10,13 +10,13 @@ $( function () {
         
         this.stateElement = undefined;
         if( this.$element.data('state-input-name') ) {
-            var stateInput = $( '[name="' + this.$element.data('state-input-name') + '"]' );
+            var stateInput = $( '#' + this.$element.data('state-input-name') );
             this.stateElement = stateInput.parent();
         }
         
         this.cityElement = undefined;
         if( this.$element.data('city-input-name') ) {
-            var cityInput = $( '[name="' + this.$element.data('city-input-name') + '"]' );
+            var cityInput = $( '#' + this.$element.data('city-input-name') );
             this.cityElement = cityInput.parent();
         }
         
@@ -30,6 +30,13 @@ $( function () {
         }
 
         this.$element.find('select').on('change', $.proxy( this.onChange, this ));
+
+        var stateSelected = this.$element.data('selected-item');
+        if( stateSelected != undefined && this.$element.find('select').val() && this.$element.find('select').val().length ) {
+            if( this.$codeInput ) {
+                this.$codeInput.val( this.$element.find('option:selected').data('geo-id') );
+            }
+        }
 
         if( this.geoType == 'country' ) {
             this.preloadSelectedValuesStates();
@@ -171,6 +178,13 @@ $( function () {
                 if( preselect != undefined ) {
                     if( preselect == item.name ) {
                         option.prop('selected', true);
+                        var hiddenInput = $(element).data('hidden-input');
+                        if( hiddenInput != undefined ) {
+                            console.log('hidden-input-preselect!');
+                            hiddenInput = $("input[name='"+ $(element).data('hidden-input') +"']");
+                            hiddenInput.val( item.geonamesCode );
+                            console.log('val set to ' + item.geonamesCode);
+                        }
                     }
                 }
                 elementSelect.append( option );

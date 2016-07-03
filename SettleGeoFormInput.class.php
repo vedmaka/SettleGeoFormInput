@@ -51,6 +51,9 @@ class SettleGeoFormInput extends SFDropdownInput
 
 		$className = ( $is_mandatory ) ? 'mandatoryField' : 'createboxInput';
 		$input_id = "input_$sfgFieldNum";
+		if( array_key_exists('html_id', $other_args) ) {
+			$input_id = $other_args['html_id'];
+		}
 
 		$innerDropdown = '';
 		// Add a blank value at the beginning, unless this is a
