@@ -112,23 +112,38 @@ $( function () {
                     break;
             }
 
-            if( this.$codeInput ) {
-                this.$codeInput.val(selectValue);
-            }
+            this.changeCodeValue( this.$element, selectValue );
 
         }else{
+
             if( this.geoType == 'country' ) {
                 if (this.stateElement != undefined) {
                     this.stateElement.find('select').html('<option></option>');
+                    this.changeCodeValue( this.stateElement, '' );
                 }
+
                 if (this.cityElement != undefined) {
                     this.cityElement.find('select').html('<option></option>');
+                    this.changeCodeValue( this.cityElement, '' );
                 }
             }
+
             if( this.geoType == 'state' ) {
                 if (this.cityElement != undefined) {
                     this.cityElement.find('select').html('<option></option>');
+                    this.changeCodeValue( this.cityElement, '' );
                 }
+            }
+
+            this.changeCodeValue( this.$element, selectValue );
+        }
+    };
+
+    SettleGeoInput.prototype.changeCodeValue = function( element, value ) {
+        if ( $(element).data('hidden-input') != undefined ) {
+            var hiddenInput = $( 'input[name="' + $(element).data('hidden-input') + '"]' );
+            if( hiddenInput ) {
+                hiddenInput.val( value );
             }
         }
     };
@@ -180,10 +195,8 @@ $( function () {
                         option.prop('selected', true);
                         var hiddenInput = $(element).data('hidden-input');
                         if( hiddenInput != undefined ) {
-                            console.log('hidden-input-preselect!');
                             hiddenInput = $("input[name='"+ $(element).data('hidden-input') +"']");
                             hiddenInput.val( item.geonamesCode );
-                            console.log('val set to ' + item.geonamesCode);
                         }
                     }
                 }
