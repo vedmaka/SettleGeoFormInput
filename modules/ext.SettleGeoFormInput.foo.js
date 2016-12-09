@@ -19,11 +19,22 @@ $( function () {
             var cityInput = $( '#' + this.$element.data('city-input-name') );
             this.cityElement = cityInput.parent();
         }
+
+        this.categoryElement = undefined;
+        if( this.$element.data('category-input-name') ) {
+			this.categoryElement = $('select[name="' + this.$element.data('category-input-name') + '"]' );
+        }
         
         this.init();
     };
 
     SettleGeoInput.prototype.init = function() {
+
+        if( this.categoryElement ) {
+            this.categoryElement.on('change', $.proxy( this.updateCategoryState, this ));
+        }
+
+        this.updateCategoryState();
 
         if( this.$element.data('hidden-input') ) {
             this.$codeInput = $('input[name="' + this.$element.data('hidden-input') + '"]');
@@ -42,6 +53,54 @@ $( function () {
             this.preloadSelectedValuesStates();
         }
 
+    };
+
+    SettleGeoInput.prototype.updateCategoryState = function() {
+
+        if( !this.categoryElement || this.categoryElement == 'undefined' ) {
+            return true;
+		}
+
+		// Restore all states first
+		this.changeState( false );
+
+		// Disable & clear input if there are no category selected
+		if( !this.categoryElement.val() || !this.categoryElement.val().length ) {
+            this.changeState( true );
+            return true;
+        }
+
+        // Match inputs to the category scope
+		var scope = this.categoryElement.find('option:selected').data('scope');
+        switch (scope) {
+			case 0: // Country
+				if( this.geoType != 'country' ) {
+					this.changeState( true ); // disable
+				}
+				break;
+			case 1: // State
+				// Skip city for state scope
+				if( this.geoType == 'city' ) {
+					this.changeState( true ); // disable
+				}
+				break;
+			case 2: // City
+				// Allow all inputs if its City scope
+				break;
+		}
+
+    };
+
+    SettleGeoInput.prototype.changeState = function(state) {
+    	if( state ) {
+    		this.$element.find('select').val('').trigger('change');
+			if( this.$codeInput ) {
+				this.$codeInput.val('');
+			}
+			this.$element.find('select').attr('disabled', 'disabled');
+		}else{
+			this.$element.find('select').attr('disabled', false);
+		}
     };
 
     SettleGeoInput.prototype.preloadSelectedValuesStates = function() {
@@ -96,15 +155,15 @@ $( function () {
             switch (this.geoType) {
                 case 'country':
                     if (this.stateElement != undefined) {
-                        this.loadValues(this.stateElement, 'state', selectValue);
+							this.loadValues(this.stateElement, 'state', selectValue);
                     }
                     if (this.cityElement != undefined) {
-                        this.cityElement.find('select').html('<option></option>');
+							this.cityElement.find('select').html('<option></option>');
                     }
                     break;
                 case 'state':
                     if (this.cityElement != undefined) {
-                        this.loadValues(this.cityElement, 'city', selectValue);
+							this.loadValues(this.cityElement, 'city', selectValue);
                     }
                     break;
                 case 'city':
@@ -137,6 +196,7 @@ $( function () {
 
             this.changeCodeValue( this.$element, selectValue );
         }
+
     };
 
     SettleGeoInput.prototype.changeCodeValue = function( element, value ) {
@@ -150,19 +210,31 @@ $( function () {
 
     SettleGeoInput.prototype.loadValues = function( element, type, parent, preselect ) {
 
+    	var wasDisabled = false;
+		if( element.find('select').is(':disabled') ) {
+			wasDisabled = true;
+		}
+
         var apiUrl = mw.config.get('wgServer') + mw.config.get('wgScriptPath')
             + '/api.php?format=json&action=settlegeotaxonomy&type=' + type + '&parent=' + parent;
 
         var elementSelect = $(element).find('select');
         elementSelect.html('');
-        elementSelect.prop('disabled', true);
+
+        // We only modify disabled state when select was not disabled intentionally
+        if( !wasDisabled ) {
+			elementSelect.prop('disabled', true);
+		}
 
         var self = this;
 
         $.get( apiUrl, function( data ){
             var items = data.settlegeotaxonomy.items;
 
+			elementSelect.append( $('<option></option>') );
+
             if (!items.length) {
+            	// Create fake option for City select when there are no cities in selected state
                 if( type == 'city' && ( self.geoType == 'state' || self.geoType == 'country' ) ) {
 
                     var sourceElement;
@@ -176,14 +248,17 @@ $( function () {
                     var opt = $('<option/>');
                     opt.prop('value', sourceElement.find('select').val());
                     opt.text(sourceElement.find('select').val());
-                    opt.prop('selected', true);
-                    elementSelect.html( opt );
+                    //opt.prop('selected', true);
+                    //opt.prepend( $('<option selected></option>') );
+                    elementSelect.append( opt );
                 }
-                elementSelect.prop('disabled', false);
+
+                if( !wasDisabled ) {
+					elementSelect.prop('disabled', false);
+				}
+
                 return false;
             }
-
-            elementSelect.append( $('<option></option>') );
 
             $(items).each(function(i, item){
                 var option = $('<option />');
@@ -203,7 +278,9 @@ $( function () {
                 elementSelect.append( option );
             });
 
-            elementSelect.prop('disabled', false);
+            if( !wasDisabled ) {
+				elementSelect.prop('disabled', false);
+			}
 
             if( element.data('geo-type') == 'state' ) {
                 self.preloadSelectedValuesCities();

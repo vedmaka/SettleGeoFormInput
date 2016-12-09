@@ -24,7 +24,7 @@ class SettleGeoFormInput extends SFDropdownInput
 			return "Error: extension SettleGeoTaxonomy is required.";
 		}
 
-		if( !in_array( '', $wgOut->getModules()) ) {
+		if( !in_array( 'ext.settlegeoforminput.foo', $wgOut->getModules()) ) {
 			$wgOut->addModules( 'ext.settlegeoforminput.foo' );
 		}
 
@@ -44,6 +44,10 @@ class SettleGeoFormInput extends SFDropdownInput
 		
 		if( array_key_exists('city_input', $other_args) ) {
 			$spanAttrs['data-city-input-name'] = $other_args['city_input'];
+		}
+
+		if( array_key_exists('category_input', $other_args) ) {
+			$spanAttrs['data-category-input-name'] = $other_args['category_input'];
 		}
 
 		// Standardize $cur_value
