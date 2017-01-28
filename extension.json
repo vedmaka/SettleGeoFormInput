@@ -37,7 +37,8 @@
 			],
 			"styles": [
 				"modules/ext.SettleGeoFormInput.foo.css"
-			]
+			],
+			"position": "bottom"
 		}
 	},
 	"ResourceFileModulePaths": {
