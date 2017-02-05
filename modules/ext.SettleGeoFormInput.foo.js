@@ -72,6 +72,7 @@ $( function () {
 
         // Match inputs to the category scope
 		var scope = this.categoryElement.find('option:selected').data('scope');
+		this.categoryScope = scope;
         switch (scope) {
 			case 0: // Country
 				if( this.geoType != 'country' ) {
@@ -113,12 +114,17 @@ $( function () {
                 return false;
             }
 
+            if( this.categoryScope != undefined && this.categoryScope == 0 ) {
+                this.stateElement.find('select').attr('disabled', 'disabled');
+            }
+
             var stateSelected = this.stateElement.data('selected-item');
             if( stateSelected != undefined ) {
                 this.loadValues( this.stateElement, 'state', selectValue, stateSelected );
             }else{
                 this.loadValues( this.stateElement, 'state', selectValue );
             }
+
         }
 
     };
