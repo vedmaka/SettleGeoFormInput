@@ -65,6 +65,26 @@ class SettleGeoFormInput extends SFDropdownInput
 						}
 					}
 					break;
+				case 'city';
+					//TODO: do the hack and extract other data from POST
+					if( array_key_exists('Country_code', $cardData) ) {
+						if ( array_key_exists( 'State_code', $cardData ) ) {
+							if ( array_key_exists( 'City_code', $cardData ) ) {
+								$tempCountry = $earth->setLanguage( $translationLanguage )->useShortNames()->findOne( array( 'geonamesCode' => $cardData['Country_code'] ) );
+								if ( $tempCountry instanceof \MenaraSolutions\Geographer\Country ) {
+									$state = $tempCountry->setLanguage( $wgLang->getCode() )->findOne( array( 'geonamesCode' => $cardData['State_code'] ) );
+									if ( $state instanceof \MenaraSolutions\Geographer\State ) {
+										$city = $state->findOne(array('geonamesCode' => $cardData['City_code']));
+										if( $city instanceof \MenaraSolutions\Geographer\City) {
+											$cur_value = $city->toArray();
+											$cur_value = $cur_value['name'];
+										}
+									}
+								}
+							}
+						}
+					}
+					break;
 			}
 		}
 
