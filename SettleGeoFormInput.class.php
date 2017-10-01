@@ -35,6 +35,21 @@ class SettleGeoFormInput extends SFDropdownInput
 			$preload = true;
 		}
 
+		//TODO: rework this
+		$translationLanguage = $wgOut->getRequest()->getVal('translateFrom');
+		if( $translationLanguage && $cur_value != '' ) {
+			$earth = new \MenaraSolutions\Geographer\Earth();
+			switch ($geoType) {
+				case 'country';
+					$tempCountry = $earth->setLanguage($translationLanguage)->useShortNames()->findOne(array('name' => $cur_value));
+					if( $tempCountry instanceof \MenaraSolutions\Geographer\Country ) {
+						$cur_value = $tempCountry->setLanguage($wgLang->getCode())->toArray();
+						$cur_value = $cur_value['name'];
+					}
+					break;
+			}
+		}
+
 		$spanClass = 'inputSpan';
 		$spanAttrs = array( 'class' => $spanClass . ' settle-geo-input', 'data-geo-type' => $geoType );
 		
