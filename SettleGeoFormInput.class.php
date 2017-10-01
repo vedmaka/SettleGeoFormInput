@@ -37,14 +37,32 @@ class SettleGeoFormInput extends SFDropdownInput
 
 		//TODO: rework this
 		$translationLanguage = $wgOut->getRequest()->getVal('translateFrom');
-		if( $translationLanguage && $cur_value != '' ) {
+		$cardData = $wgOut->getRequest()->getArray('Card');
+		if( $translationLanguage && $cur_value != '' && count($cardData) ) {
 			$earth = new \MenaraSolutions\Geographer\Earth();
 			switch ($geoType) {
 				case 'country';
-					$tempCountry = $earth->setLanguage($translationLanguage)->useShortNames()->findOne(array('name' => $cur_value));
-					if( $tempCountry instanceof \MenaraSolutions\Geographer\Country ) {
-						$cur_value = $tempCountry->setLanguage($wgLang->getCode())->toArray();
-						$cur_value = $cur_value['name'];
+					if( array_key_exists('Country_code', $cardData) ) {
+						$tempCountry = $earth->setLanguage($translationLanguage)->useShortNames()->findOne(array('geonamesCode' => $cardData['Country_code']));
+						if( $tempCountry instanceof \MenaraSolutions\Geographer\Country ) {
+							$cur_value = $tempCountry->setLanguage($wgLang->getCode())->toArray();
+							$cur_value = $cur_value['name'];
+						}
+					}
+					break;
+				case 'state';
+					//TODO: do the hack and extract other data from POST
+					if( array_key_exists('Country_code', $cardData) ) {
+						if ( array_key_exists( 'State_code', $cardData ) ) {
+							$tempCountry = $earth->setLanguage( $translationLanguage )->useShortNames()->findOne( array( 'geonamesCode' => $cardData['Country_code'] ) );
+							if ( $tempCountry instanceof \MenaraSolutions\Geographer\Country ) {
+								$state = $tempCountry->getStates()->findOne( array( 'geonamesCode' => $cardData['State_code'] ) );
+								if ( $state instanceof \MenaraSolutions\Geographer\State ) {
+									$cur_value = $state->toArray();
+									$cur_value = $cur_value['name'];
+								}
+							}
+						}
 					}
 					break;
 			}
